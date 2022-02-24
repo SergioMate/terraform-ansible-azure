@@ -1,12 +1,12 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group
 
-resource "azurerm_network_security_group" "mySecGroup" {
-    name                = "sshtraffic"
-    location            = azurerm_resource_group.rg.location
-    resource_group_name = azurerm_resource_group.rg.name
+resource "azurerm_network_security_group" "master" {
+    name                = "master_nsg"
+    location            = azurerm_resource_group.cp2.location
+    resource_group_name = azurerm_resource_group.cp2.name
     
     security_rule {
-        name                       = "SSH"
+        name                       = "ssh"
         priority                   = 1001
         direction                  = "Inbound"
         access                     = "Allow"
@@ -17,15 +17,38 @@ resource "azurerm_network_security_group" "mySecGroup" {
         destination_address_prefix = "*"
     }
     
-    tags = {
-        environment = "CP2"
+    tags = var.tags
+}
+
+resource "azurerm_network_security_group" "workers" {
+    name                = "workers_nsg"
+    location            = azurerm_resource_group.cp2.location
+    resource_group_name = azurerm_resource_group.cp2.name
+    
+    security_rule {
+        name                       = "ssh"
+        priority                   = 1001
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "22"
+        source_address_prefix      = "*"
+        destination_address_prefix = "*"
     }
+    
+    tags = var.tags
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_security_group_association
 
-resource "azurerm_network_interface_security_group_association" "mySecGroupAssociation" {
-    network_interface_id      = azurerm_network_interface.myNic[count.index].id
-    count                     = length(vars.vms)
-    network_security_group_id = azurerm_network_security_group.mySecGroup.id
+resource "azurerm_network_interface_security_group_association" "master" {
+    network_interface_id      = azurerm_network_interface.master.id
+    network_security_group_id = azurerm_network_security_group.master.id
+}
+
+resource "azurerm_network_interface_security_group_association" "workers" {
+    network_interface_id      = azurerm_network_interface.workers[count.index].id
+    count                     = var.workers_count
+    network_security_group_id = azurerm_network_security_group.workers.id
 }

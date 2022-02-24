@@ -6,40 +6,32 @@ terraform {
             source  = "hashicorp/azurerm"
             version = "=2.46.1"
         }
+        local = {
+            source = "hashicorp/local"
+        }
     }
-}
-
-provider "azurerm" {
-    features {}
-    subscription_id = "<SUBSCRIPTION-ID>"
-    client_id       = "<APP-ID>"
-    client_secret   = "<PASSWORD>"
-    tenant_id       = "<TENANT>"
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group
 
-resource "azurerm_resource_group" "rg" {
-    name     = "kubernetes_rg"
-    location = vars.location
+resource "azurerm_resource_group" "cp2" {
+    name     = "resourcegroup_cp2"
+    location = var.location
   
-    tags = {
-        environment = "CP2"
-    }
-  
+    tags = var.tags
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account
 
-resource "azurerm_storage_account" "stAccount" {
-    name                     = "staccountcp2"
-    resource_group_name      = azurerm_resource_group.rg.name
-    location                 = azurerm_resource_group.rg.location
+resource "azurerm_storage_account" "cp2" {
+    name                     = var.storage_account
+    resource_group_name      = azurerm_resource_group.cp2.name
+    location                 = azurerm_resource_group.cp2.location
     account_tier             = "Standard"
+    
+    # https://docs.microsoft.com/en-us/azure/storage/common/storage-redundancy
+    
     account_replication_type = "LRS"
 
-    tags = {
-        environment = "CP2"
-    }
-    
+    tags = var.tags
 }

@@ -1,1 +1,7 @@
-main.tf
+credentials.tf
+
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+
+host.azure
