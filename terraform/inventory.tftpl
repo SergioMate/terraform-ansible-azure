@@ -2,7 +2,7 @@
 ansible_user=${user}
 
 [master]
-${master_ip} ansible_connection=local
+${master_ip}
 
 [worker]
 %{ for ip in worker_ips ~}
@@ -10,4 +10,4 @@ ${ip}
 %{ endfor ~}
 
 [nfs]
-${master_ip} ansible_connection=local
+${master_ip}
