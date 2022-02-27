@@ -38,6 +38,19 @@ resource "azurerm_linux_virtual_machine" "master" {
         storage_account_uri = azurerm_storage_account.cp2.primary_blob_endpoint
     }
     
+    # https://www.terraform.io/language/resources/provisioners/remote-exec
+    
+    provisioner "remote-exec" {
+        inline = ["echo '${self.name} ready for SSH'"]
+        
+        connection {
+            type        = "ssh"
+            host        = self.public_ip_address
+            user        = var.ssh_user
+            private_key = file(var.private_key_path)
+        }
+    }
+    
     tags = var.tags 
 }
 
@@ -78,6 +91,19 @@ resource "azurerm_linux_virtual_machine" "workers" {
         # https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
         
         storage_account_uri = azurerm_storage_account.cp2.primary_blob_endpoint
+    }
+    
+    # https://www.terraform.io/language/resources/provisioners/remote-exec
+    
+    provisioner "remote-exec" {
+        inline = ["echo '${self.name} ready for SSH'"]
+        
+        connection {
+            type        = "ssh"
+            host        = self.public_ip_address
+            user        = var.ssh_user
+            private_key = file(var.private_key_path)
+        }
     }
     
     tags = var.tags 
