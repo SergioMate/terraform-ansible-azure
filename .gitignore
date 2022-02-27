@@ -4,4 +4,4 @@ credentials.tf
 *.tfstate
 *.tfstate.*
 
-host.azure
+host.*
