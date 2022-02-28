@@ -8,4 +8,4 @@ enabled=1
 gpgcheck=1
 gpgkey=https://packages.microsoft.com/keys/microsoft.asc" | tee /etc/yum.repos.d/azure-cli.repo
 dnf install terraform python3 azure-cli epel-release -y
-dnf install ansible -y
+dnf install ansible tree jq -y
