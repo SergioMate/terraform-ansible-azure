@@ -1,0 +1,22 @@
+---
+
+- name: setup machines
+  hosts: all
+  become: yes
+  gather_facts: yes
+  roles:
+    - vmsetup
+
+- name: nfs deploy
+  hosts: nfs
+  become: yes
+  gather_facts: no
+  roles:
+    - nfsdeploy
+
+- name: k8s install
+  hosts: masters, workers
+  become: yes
+  gather_facts: no
+  roles:
+    - k8sinstall

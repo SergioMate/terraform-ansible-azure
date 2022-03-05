@@ -1,0 +1,13 @@
+---
+- name: install NFS packages
+  dnf:
+    name:
+      - nfs-utils
+      - net-tools
+    state: latest
+
+- name: start NFS service
+  service:
+    name: nfs-server
+    state: started
+    enabled: yes

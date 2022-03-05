@@ -1,8 +1,0 @@
----
-- name: Pre-setup tasks
-  block:
-    - import_tasks: update.yml
-    - import_tasks: timezone.yml
-    - import_tasks: selinux.yml
-    - import_tasks: nfsutils.yml
-    - import_tasks: reboot.yml

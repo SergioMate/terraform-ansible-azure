@@ -1,6 +1,0 @@
----
-
-- hosts: masters
-  pre_tasks:
-    - import_tasks: tasks/vmsetup.yml
-  roles:

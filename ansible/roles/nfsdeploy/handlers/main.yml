@@ -1,0 +1,8 @@
+---
+- name: reload firewall
+  service:
+    name: firewalld 
+    state: reloaded
+
+- name: exportfs
+  command: exportfs -ra
