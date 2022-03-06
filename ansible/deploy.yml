@@ -20,3 +20,10 @@
   gather_facts: no
   roles:
     - k8sinstall
+
+- name: k8s master
+  hosts: masters
+  become: yes
+  gather_facts: no
+  roles:
+    - k8smaster

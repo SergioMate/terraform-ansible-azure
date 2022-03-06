@@ -33,3 +33,13 @@
   replace:
     path: /etc/fstab
     regexp: '^/.*swap.*$'
+
+- name: enable firewall flannel ports
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - 8285/udp
+    - 8472/udp
+  notify: reload firewall

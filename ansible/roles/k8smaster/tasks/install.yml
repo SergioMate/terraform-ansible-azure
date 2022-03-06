@@ -1,0 +1,28 @@
+---
+- name: check kubeadm
+  stat:
+    path: "/etc/kubernetes/pki/ca.crt"
+  register: kubeadm_check
+
+- name: kubeadm init
+  command: kubeadm init --pod-network-cidr 10.0.0.0/16
+  when: not kubeadm_check.stat.exists
+
+- name: k8s dir
+  file:
+    path: $HOME/.kube
+    state: directory
+
+- name: k8s conf
+  copy:
+    src: /etc/kubernetes/admin.conf
+    remote_src: yes
+    dest: $HOME/.kube/config
+
+- name: kubectl
+  command: kubectl apply -f "{{ item.url }}"
+  with_items:
+    - name: networking
+      url: https://projectcalico.docs.tigera.io/manifests/canal.yaml
+    - name: ingress controller
+      url: https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml
