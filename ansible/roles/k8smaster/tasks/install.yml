@@ -10,14 +10,17 @@
 
 - name: k8s dir
   file:
-    path: $HOME/.kube
+    path: /home/{{ ansible_user }}/.kube
     state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
 
 - name: k8s conf
   copy:
     src: /etc/kubernetes/admin.conf
     remote_src: yes
-    dest: $HOME/.kube/config
+    dest: /home/{{ ansible_user }}/.kube/config
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: 0755

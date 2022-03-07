@@ -16,6 +16,6 @@
     rich_rule: rule family=ipv4 source address="{{ hostvars[item].ansible_default_ipv4.address }}"/32 accept
     permanent: yes
     state: enabled
+    immediate: yes
   with_items: 
     - "{{ groups['workers'] }}"
-  notify: reload firewall
