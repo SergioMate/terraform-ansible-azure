@@ -10,6 +10,7 @@ resource "local_file" "ansible_inventory" {
             user     = var.ssh_user
             master_ip  = azurerm_linux_virtual_machine.master.public_ip_address,
             worker_ips = toset([for worker_vm in azurerm_linux_virtual_machine.workers : worker_vm.public_ip_address])
+            nfs_ip  = azurerm_linux_virtual_machine.master.public_ip_address,
         }
     )
 }
@@ -28,7 +29,8 @@ resource "null_resource" "ansible_run" {
     # https://www.terraform.io/language/resources/provisioners/local-exec
     
     provisioner "local-exec" {
-        command = "echo 'VM prepared for ansible'"
+        working_dir = "${path.module}/../ansible/" 
+        command     = "ansible-playbook -i host.azure --private-key ${var.private_key_path} deploy.yml"
     }
 }
 
