@@ -1,7 +1,7 @@
 ---
 - name: check kubeadm
   stat:
-    path: "/etc/kubernetes/pki/ca.crt"
+    path: /etc/kubernetes/pki/ca.crt
   register: kubeadm_check
 
 - name: kubeadm init
@@ -32,3 +32,20 @@
       url: https://projectcalico.docs.tigera.io/manifests/canal.yaml
     - name: ingress controller
       url: https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml
+
+- name: check join command
+  local_action:
+    stat:
+      path: "{{ join_tmp_path }}"
+  register: join_check
+
+- name: get join
+  command: kubeadm token create --print-join-command
+  when: not join_check.stat.exists
+  register: join_command
+
+- name: copy join
+  local_action:
+    copy:
+      content: "{{ join_command.stdout }}"
+      dest: "{{ join_tmp_path }}"

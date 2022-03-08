@@ -1,5 +1,4 @@
 ---
-
 - name: setup machines
   hosts: all
   become: yes
@@ -21,9 +20,16 @@
   roles:
     - k8sinstall
 
-- name: k8s master
+- name: k8s masters
   hosts: masters
   become: yes
   gather_facts: no
   roles:
-    - k8smaster
+    - k8smasters
+
+- name: k8s workers
+  hosts: workers
+  become: yes
+  gather_facts: no
+  roles:
+    - k8sworkers

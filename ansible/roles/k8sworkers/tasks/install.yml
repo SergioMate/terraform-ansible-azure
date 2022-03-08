@@ -1,0 +1,14 @@
+---
+- name: copy join
+  copy:
+    src: "{{ join_tmp_path }}"
+    dest: "{{ join_tmp_path }}"
+
+- name: check joined
+  stat:
+    path: /etc/kubernetes/pki/ca.crt
+  register: joined_check
+
+- name: join
+  shell: "{{ join_tmp_path }}"
+  when: not joined_check.stat.exists
