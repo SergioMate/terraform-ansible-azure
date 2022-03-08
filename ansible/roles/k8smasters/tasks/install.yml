@@ -34,9 +34,9 @@
       url: https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml
 
 - name: check join command
-  local_action:
-    stat:
-      path: "{{ join_tmp_path }}"
+  delegate_to: localhost
+  stat:
+    path: "{{ join_tmp_path }}"
   register: join_check
 
 - name: get join
@@ -45,7 +45,7 @@
   register: join_command
 
 - name: copy join
-  local_action:
-    copy:
-      content: "{{ join_command.stdout }}"
-      dest: "{{ join_tmp_path }}"
+  delegate_to: localhost
+  copy:
+    content: "{{ join_command.stdout }}"
+    dest: "{{ join_tmp_path }}"
