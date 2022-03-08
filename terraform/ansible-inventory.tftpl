@@ -1,13 +1,19 @@
-[all:vars]
-ansible_user=${user}
-
-[masters]
+[all]
 master ansible_host=${master_ip}
-
-[workers]
 %{ for ip in worker_ips ~}
 worker${index(worker_ips, ip)} ansible_host=${ip}
 %{ endfor ~}
 
+[all:vars]
+ansible_user=${user}
+
+[masters]
+master
+
+[workers]
+%{ for ip in worker_ips ~}
+worker${index(worker_ips, ip)}
+%{ endfor ~}
+
 [nfss]
-nfs ansible_host=${mfs_ip}
+master
