@@ -52,7 +52,7 @@ resource "azurerm_network_interface" "master" {
         name                          = "master_ipconf"
         subnet_id                     = azurerm_subnet.cp2.id
         private_ip_address_allocation = "Static"
-        private_ip_address_allocation = "10.0.1.10"
+        private_ip_address            = "10.0.1.10"
         public_ip_address_id          = azurerm_public_ip.master.id
     }
     
@@ -69,7 +69,7 @@ resource "azurerm_network_interface" "workers" {
         name                          = "workers${count.index}_ipconf"
         subnet_id                     = azurerm_subnet.cp2.id
         private_ip_address_allocation = "Static"
-        private_ip_address_allocation = "10.0.1.${11 + count.index}"
+        private_ip_address            = "10.0.1.${11 + count.index}"
         public_ip_address_id          = azurerm_public_ip.workers[count.index].id
     }
     
