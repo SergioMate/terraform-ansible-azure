@@ -13,9 +13,11 @@
 
 - name: enable firewall k8s-worker ports
   firewalld:
-    rich_rule: rule family=ipv4 source address="{{ hostvars[item].ansible_default_ipv4.address }}"/32 accept
+    rich_rule: rule family=ipv4 source address="10.0.1.{{ 11 + ansible_loop.index0 }}"/32 accept
     permanent: yes
     state: enabled
     immediate: yes
   with_items: 
     - "{{ groups['workers'] }}"
+  loop_control:
+    extended: yes

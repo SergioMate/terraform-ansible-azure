@@ -1,9 +1,9 @@
 # master
 {% for master in groups['masters'] %}
-/srv/nfs    {{ hostvars[master].ansible_default_ipv4.address }}(rw,sync)
+/srv/nfs    10.0.1.10(rw,sync)
 {% endfor %}
 
 # workers
 {% for worker in groups['workers'] %}
-/srv/nfs    {{ hostvars[worker].ansible_default_ipv4.address }}(rw,sync)
+/srv/nfs    10.0.1.{{ 11 + ansible_loop.index0 }}(rw,sync)
 {% endfor %}
