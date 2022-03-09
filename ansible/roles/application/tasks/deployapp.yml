@@ -1,0 +1,92 @@
+---
+- name: create namespace
+  k8s:
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: snake
+        labels:
+          app: snake
+
+- name: create pod
+  k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: snake
+        namespace: snake
+        labels:
+          app: snake
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: snake
+        template:
+          metadata:
+            labels:
+              app: snake
+          spec:
+            containers:
+            - name: snake
+              image: aschil/snake
+              ports:
+              - containerPort: 8080
+              readinessProbe:
+                httpGet:
+                  path: /
+                  port: 8080
+                initialDelaySeconds: 5
+                periodSeconds: 5
+                successThreshold: 1
+
+- name: create service
+  k8s_service:
+    name: snake-service
+    namespace: snake
+    selector:
+      app: snake
+    ports:
+      - name: http
+        protocol: TCP
+        port: 9090
+        targetPort: 8080
+
+- name: create ingress
+  k8s:
+    definition:
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        name: snake-ingress
+        namespace: snake
+      labels:
+        app: snake
+      annotations:
+        haproxy.org/path-rewrite: "/"
+        kubernetes.io/ingress.class: haproxy
+      spec:
+      rules:
+      - http:
+          paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: host-service
+                port:
+                  number: 9090
+
+- name: create configmap
+  k8s:
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: haproxy-configmap
+        namespace: snake
+      data:
+        scale-server-slots: "42"
+        ssl-redirect: "false"

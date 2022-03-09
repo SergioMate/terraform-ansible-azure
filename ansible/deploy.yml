@@ -33,3 +33,13 @@
   gather_facts: no
   roles:
     - k8sworkers
+
+- name: reboot
+  hosts: all
+  reboot:
+
+- name: application
+  hosts: workers
+  gather_facts: no
+  roles:
+    - application
