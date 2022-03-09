@@ -5,7 +5,7 @@
   register: kubeadm_check
 
 - name: kubeadm init
-  command: kubeadm init --pod-network-cidr 10.0.0.0/16
+  command: kubeadm init --pod-network-cidr 10.1.0.0/16
   when: not kubeadm_check.stat.exists
 
 - name: k8s dir
@@ -25,13 +25,25 @@
     group: "{{ ansible_user }}"
     mode: 0755
 
-- name: kubectl
+- name: deploy networking & ingress controller
   command: kubectl apply -f "{{ item.url }}"
   with_items:
     - name: networking
       url: https://projectcalico.docs.tigera.io/manifests/canal.yaml
     - name: ingress controller
       url: https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml
+
+- name: get ingress controller service
+  k8s_info:
+    kind: service
+    namespace: haproxy-controller
+  register: ingress_controller
+
+- name: save ingress controller service
+  delegate_to: localhost
+  copy:
+    content: "{{ ingress_controller }}"
+    dest: "/tmp/ingress_controller"
 
 - name: check join command
   delegate_to: localhost
