@@ -36,7 +36,8 @@
 
 - name: reboot
   hosts: all
-  reboot:
+  tasks:
+    reboot:
 
 - name: application
   hosts: workers
