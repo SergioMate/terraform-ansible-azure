@@ -7,10 +7,9 @@ resource "local_file" "ansible_inventory" {
     
     content  = templatefile("${path.module}/ansible-inventory.tftpl",
         {
-            user     = var.ssh_user
-            master_ip  = azurerm_linux_virtual_machine.master.public_ip_address,
+            user       = var.ssh_user
+            master_ip  = azurerm_linux_virtual_machine.master.public_ip_address
             worker_ips = toset([for worker_vm in azurerm_linux_virtual_machine.workers : worker_vm.public_ip_address])
-            nfs_ip  = azurerm_linux_virtual_machine.master.public_ip_address,
         }
     )
 }
