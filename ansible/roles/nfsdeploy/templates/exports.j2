@@ -5,5 +5,5 @@
 
 # workers
 {% for worker in groups['workers'] %}
-/srv/nfs    10.0.1.{{ 11 + ansible_loop.index0 }}(rw,sync)
+/srv/nfs    10.0.1.{{ 11 + loop.index0 }}(rw,sync)
 {% endfor %}
