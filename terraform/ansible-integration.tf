@@ -9,7 +9,7 @@ resource "local_file" "ansible_inventory" {
         {
             user       = var.ssh_user
             master_ip  = azurerm_linux_virtual_machine.master.public_ip_address
-            worker_ips = toset([for worker_vm in azurerm_linux_virtual_machine.workers : worker_vm.public_ip_address])
+            worker_ips = tolist([for worker_vm in azurerm_linux_virtual_machine.workers : worker_vm.public_ip_address])
         }
     )
 }
