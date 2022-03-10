@@ -5,6 +5,7 @@ worker${index(worker_ips, ip)} ansible_host=${ip}
 %{ endfor ~}
 
 [all:vars]
+host_key_checking=false
 ansible_user=${user}
 
 [masters]
