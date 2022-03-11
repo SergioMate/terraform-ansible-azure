@@ -3,6 +3,7 @@
   copy:
     src: "{{ join_tmp_path }}"
     dest: "{{ join_tmp_path }}"
+    mode: 0777
 
 - name: check joined
   stat:
@@ -12,3 +13,5 @@
 - name: join
   shell: "{{ join_tmp_path }}"
   when: not joined_check.stat.exists
+  notify:
+    - reboot

@@ -43,16 +43,21 @@
                 successThreshold: 1
 
 - name: create service
-  k8s_service:
-    name: snake-service
-    namespace: snake
-    selector:
-      app: snake
-    ports:
-      - name: http
-        protocol: TCP
-        port: 9090
-        targetPort: 8080
+  k8s:
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: snake-service
+        namespace: snake
+      spec:
+        selector:
+          app: snake
+        ports:
+          - name: http
+            protocol: TCP
+            port: 9090
+            targetPort: 8080
 
 - name: create ingress
   k8s:
@@ -65,19 +70,19 @@
       labels:
         app: snake
       annotations:
-        haproxy.org/path-rewrite: "/"
+        haproxy.org/path-rewrite: /
         kubernetes.io/ingress.class: haproxy
       spec:
-      rules:
-      - http:
-          paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: host-service
-                port:
-                  number: 9090
+        rules:
+        - http:
+            paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: snake-service
+                  port:
+                    number: 9090
 
 - name: create configmap
   k8s:

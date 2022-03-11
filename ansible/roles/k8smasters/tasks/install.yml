@@ -7,6 +7,8 @@
 - name: kubeadm init
   command: kubeadm init --pod-network-cidr 10.1.0.0/16
   when: not kubeadm_check.stat.exists
+  notify:
+    - reboot
 
 - name: k8s dir
   file:
@@ -25,26 +27,55 @@
     group: "{{ ansible_user }}"
     mode: 0755
 
-- name: deploy networking & ingress controller
-  command: kubectl apply -f "{{ item.url }}"
+- name: download k8s yml
+  get_url:
+    url: "{{ item.url }}"
+    dest: "/tmp/{{ item.name }}.yml"
   with_items:
     - name: networking
       url: https://projectcalico.docs.tigera.io/manifests/canal.yaml
-    - name: ingress controller
+    - name: ingress_controller
+      url: https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml
+
+- name: deploy networking & ingress controller
+  k8s:
+    src: "/tmp/{{ item.name }}.yml"
+  with_items:
+    - name: networking
+      url: https://projectcalico.docs.tigera.io/manifests/canal.yaml
+    - name: ingress_controller
       url: https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
-    
+  notify:
+    - reboot
 
 - name: get ingress controller service
   k8s_info:
     kind: service
     namespace: haproxy-controller
-  register: ingress_controller
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  register: ingress_controller_info
 
-- name: save ingress controller service
-  debug: 
-    var: ingress_controller
+- debug:
+    msg: "{{ ingress_controller_info | regex_search('\"nodePort\": (\\d+),\\n\\s*?"port": 80,\|\"port\": 80,\\n\\s*?\"nodePort\": (\\d+),')}}"
+  register: ingress_controller_port
+
+- name: check ingress controller port
+  wait_for:
+    host: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+    port: "{{ ingress_controller_port }}"
+    timeout: 5
+  register: ingress_controller_port_check
+  ignore_errors: yes
+
+- name: deploy terraform
+  terraform:
+    project_path: "{{playbook_dir  }}/../terraform" 
+    variables:
+      ingress_controller_port: "{{ ingress_controller_port }}"
+  when: ingress_controller_port_check is failed
 
 - name: check join command
   delegate_to: localhost
@@ -62,3 +93,4 @@
   copy:
     content: "{{ join_command.stdout }}"
     dest: "{{ join_tmp_path }}"
+  when: not join_check.stat.exists

@@ -1,8 +1,8 @@
 # https://www.terraform.io/language/values/variables
 
 variable "workers_count" {
-    type        = number
     description = "workers count"
+    type        = number
     default     = 2
 }
 
@@ -29,4 +29,10 @@ variable "worker_vm_size" {
     description = "worker VM size"
     type        = string
     default     = "Standard_DS11-1_v2" # 1 vCPU & 14 GB
+}
+
+variable "ingress_controller_port" {
+    description = "ingress controller port"
+    type        = number
+    default     = 30153
 }

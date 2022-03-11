@@ -34,13 +34,8 @@
   roles:
     - k8sworkers
 
-- name: reboot
-  hosts: all
-  tasks:
-    - reboot:
-
 - name: application
-  hosts: workers
+  hosts: masters
   gather_facts: no
   roles:
     - application

@@ -37,5 +37,5 @@ resource "null_resource" "ansible_run" {
 
 output "URL" {
     description = "URL access to application"
-    value       = "http://${azurerm_linux_virtual_machine.master.public_ip_address}"
+    value       = "http://${azurerm_linux_virtual_machine.master.public_ip_address}:${var.ingress_controller_port}"
 }
