@@ -32,6 +32,9 @@
       url: https://projectcalico.docs.tigera.io/manifests/canal.yaml
     - name: ingress controller
       url: https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+    
 
 - name: get ingress controller service
   k8s_info:
@@ -40,10 +43,8 @@
   register: ingress_controller
 
 - name: save ingress controller service
-  delegate_to: localhost
-  copy:
-    content: "{{ ingress_controller }}"
-    dest: "/tmp/ingress_controller"
+  debug: 
+    var: ingress_controller
 
 - name: check join command
   delegate_to: localhost
