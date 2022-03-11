@@ -1,0 +1,4 @@
+---
+- name: reboot
+  reboot:
+    post_reboot_delay: 100

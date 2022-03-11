@@ -1,0 +1,6 @@
+---
+k8s_deployments_yml:
+    - name: networking
+      url: https://projectcalico.docs.tigera.io/manifests/canal.yaml
+    - name: ingress_controller
+      url: https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml

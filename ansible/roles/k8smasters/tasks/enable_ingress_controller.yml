@@ -1,0 +1,20 @@
+- debug:
+    msg: "{{ ingress_controller_info | to_nice_yaml | regex_search('\"nodePort\": (\\d+),\\n\\s*?\"port\": 80,|\"port\": 80,\\n\\s*?\"nodePort\": (\\d+),')}}"
+  register: ingress_controller_port
+
+- name: check ingress controller port
+  delegate_to: localhost
+  wait_for:
+    host: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+    port: "{{ ingress_controller_port }}"
+    timeout: 5
+  register: ingress_controller_port_check
+  ignore_errors: yes
+
+- name: deploy terraform
+  delegate_to: localhost
+  terraform:
+    project_path: "{{playbook_dir  }}/../terraform/" 
+    variables:
+      ingress_controller_port: "{{ ingress_controller_port }}"
+  when: ingress_controller_port_check is failed
