@@ -29,7 +29,7 @@ resource "null_resource" "ansible_run" {
     
     provisioner "local-exec" {
         working_dir = "${path.module}/../ansible/" 
-        command     = "ansible-playbook -i host.azure --private-key ${var.private_key_path} deploy.yml"
+        command     = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i host.azure --private-key ${var.private_key_path} deploy.yml"
     }
 }
 
