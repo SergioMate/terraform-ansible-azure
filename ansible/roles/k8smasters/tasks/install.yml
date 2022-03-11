@@ -31,26 +31,18 @@
   get_url:
     url: "{{ item.url }}"
     dest: "/tmp/{{ item.name }}.yml"
-  with_items:
-    - name: networking
-      url: https://projectcalico.docs.tigera.io/manifests/canal.yaml
-    - name: ingress_controller
-      url: https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml
+  loop: "{{ k8s_deployments_yml }}"
 
 - name: deploy networking & ingress controller
   k8s:
     src: "/tmp/{{ item.name }}.yml"
-  with_items:
-    - name: networking
-      url: https://projectcalico.docs.tigera.io/manifests/canal.yaml
-    - name: ingress_controller
-      url: https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml
+  loop: "{{ k8s_deployments_yml }}"
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
   notify:
     - reboot
 
-- name: get ingress controller service
+- name: get ingress controller info
   k8s_info:
     kind: service
     namespace: haproxy-controller
@@ -58,24 +50,15 @@
     KUBECONFIG: /etc/kubernetes/admin.conf
   register: ingress_controller_info
 
-- debug:
-    msg: "{{ ingress_controller_info | regex_search('\"nodePort\": (\\d+),\\n\\s*?"port": 80,\|\"port\": 80,\\n\\s*?\"nodePort\": (\\d+),')}}"
-  register: ingress_controller_port
+- name: save ingress controller info
+  delegate_to: localhost
+  copy:
+    content: "{{ ingress_controller_info | to_nice_yaml }}"
+    dest: "{{ ingress_controller_info_path }}"
 
-- name: check ingress controller port
-  wait_for:
-    host: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
-    port: "{{ ingress_controller_port }}"
-    timeout: 5
-  register: ingress_controller_port_check
-  ignore_errors: yes
-
-- name: deploy terraform
-  terraform:
-    project_path: "{{playbook_dir  }}/../terraform" 
-    variables:
-      ingress_controller_port: "{{ ingress_controller_port }}"
-  when: ingress_controller_port_check is failed
+- name: enable ingress controller port
+  include_tasks: enable_ingress_controller_port.yml
+  when: false
 
 - name: check join command
   delegate_to: localhost

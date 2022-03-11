@@ -1,2 +1,4 @@
 ---
+ingress_controller_info_path: /tmp/ingress_controller_info.yml
+
 join_tmp_path: /tmp/k8s_join.sh
