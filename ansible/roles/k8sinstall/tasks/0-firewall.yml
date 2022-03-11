@@ -1,0 +1,45 @@
+---
+- name: start firewalld service
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+
+- name: br_netfilter module
+  modprobe:
+    name: br_netfilter
+
+- name: enable firewall masquerade
+  firewalld:
+    masquerade: yes
+    permanent: yes
+    state: enabled
+  notify: reload firewall
+
+- name: sysctl net
+  sysctl:
+    name: "{{ item }}"
+    value: 1
+  with_items:
+    - net.bridge.bridge-nf-call-ip6tables
+    - net.bridge.bridge-nf-call-iptables
+    - net.ipv4.ip_forward
+
+- name: disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+    
+- name: remove swap from /etc/fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^/.*swap.*$'
+
+- name: enable firewall flannel ports
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - 8285/udp
+    - 8472/udp
+  notify: reload firewall

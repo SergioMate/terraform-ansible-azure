@@ -1,4 +1,4 @@
 ---
-- import_tasks: install.yml
-- import_tasks: config.yml
-- import_tasks: firewall.yml
+- import_tasks: 0-install.yml
+- import_tasks: 1-config.yml
+- import_tasks: 2-firewall.yml
