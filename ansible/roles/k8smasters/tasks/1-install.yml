@@ -62,20 +62,14 @@
 - name: enable ingress controller port
   include_tasks: 1-1-enable_ingress_controller_port.yml
 
-- name: check join command
-  delegate_to: localhost
-  stat:
-    path: "{{ join_tmp_path }}"
-  register: join_check
-
 - name: get join
   command: kubeadm token create --print-join-command
-  when: not join_check.stat.exists
   register: join_command
+  changed_when: no
 
 - name: copy join
   delegate_to: localhost
   copy:
     content: "{{ join_command.stdout }}"
     dest: "{{ join_tmp_path }}"
-  when: not join_check.stat.exists
+    mode: 0755
