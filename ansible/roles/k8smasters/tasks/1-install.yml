@@ -33,6 +33,10 @@
     dest: "/tmp/{{ item.name }}.yml"
   loop: "{{ k8s_deployments_yml }}"
 
+- name: install kubernetes python package
+  pip:
+    name: kubernetes
+
 - name: deploy networking & ingress controller
   k8s:
     src: "/tmp/{{ item.name }}.yml"
