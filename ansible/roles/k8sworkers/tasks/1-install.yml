@@ -5,7 +5,7 @@
   register: joined_check
 
 - name: join
-  shell: "{{ join_tmp_path }}"
+  script: "{{ join_tmp_path }}"
   when: not joined_check.stat.exists
   notify:
     - reboot
