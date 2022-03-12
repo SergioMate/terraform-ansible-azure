@@ -1,5 +1,5 @@
-- debug:
-    msg: "{{ ingress_controller_info | to_nice_yaml | regex_search('\"nodePort\": (\\d+),\\n\\s*?\"port\": 80,|\"port\": 80,\\n\\s*?\"nodePort\": (\\d+),')}}"
+- name: get ingress_controller_port
+  shell: getPort.py "{{ ingress_controller_info_path }}"
   register: ingress_controller_port
 
 - name: check ingress controller port

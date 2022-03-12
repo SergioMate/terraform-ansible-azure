@@ -55,14 +55,12 @@
   register: ingress_controller_info
 
 - name: save ingress controller info
-  delegate_to: localhost
   copy:
     content: "{{ ingress_controller_info | to_nice_yaml }}"
     dest: "{{ ingress_controller_info_path }}"
 
 - name: enable ingress controller port
   include_tasks: 1-1-enable_ingress_controller_port.yml
-  when: false
 
 - name: check join command
   delegate_to: localhost
