@@ -8,10 +8,9 @@
     var: ingress_controller_port
 
 - name: check ingress controller port
-  delegate_to: localhost
   wait_for:
     host: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
-    port: "{{ ingress_controller_port.stdout }}"
+    port: "{{ ingress_controller_port.stdout | int }}"
     timeout: 5
   register: ingress_controller_port_check
   ignore_errors: yes
@@ -24,5 +23,5 @@
       - azurerm_network_security_group.master
     lock: no
     variables:
-      ingress_controller_port: "{{ ingress_controller_port.stdout }}"
+      ingress_controller_port: "{{ ingress_controller_port.stdout | int }}"
   when: ingress_controller_port_check is failed
