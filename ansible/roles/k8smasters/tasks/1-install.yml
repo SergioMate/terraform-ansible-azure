@@ -70,6 +70,6 @@
 - name: copy join
   delegate_to: localhost
   copy:
-    content: "{{ join_command.stdout }}"
+    content: "{{ join_command.stdout }}\n"
     dest: "{{ join_tmp_path }}"
     mode: 0755
