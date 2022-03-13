@@ -67,11 +67,11 @@
       metadata:
         name: snake-ingress
         namespace: snake
-      labels:
-        app: snake
-      annotations:
-        haproxy.org/path-rewrite: /
-        kubernetes.io/ingress.class: haproxy
+        labels:
+          app: snake
+        annotations:
+          haproxy.org/path-rewrite: "/"
+          kubernetes.io/ingress.class: haproxy
       spec:
         rules:
         - http:
