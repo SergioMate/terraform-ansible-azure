@@ -25,5 +25,5 @@ This repository enables Kubernetes cluster atomatized deployment into Azure with
   > Kubernetes Ingress Controller Port default value will be replaced during deployment
 4. Run [deploy.sh](deploy.sh) script to deploy infrastructure with Terraform, which will call Ansible playbook to install needed packages.
 
-##Destroy
+## Destroy
 Run [destroy.sh](destroy.sh) script to destroy Azure infraestructure
