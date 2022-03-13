@@ -4,12 +4,10 @@
     executable: python3
   register: ingress_controller_port
 
-- debug:
-    var: ingress_controller_port
-
 - name: check ingress controller port
+  delegate_to: localhost
   wait_for:
-    host: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+    host: "{{ hostvars[inventory_hostname].ansible_host }}"
     port: "{{ ingress_controller_port.stdout | int }}"
     timeout: 5
   register: ingress_controller_port_check
