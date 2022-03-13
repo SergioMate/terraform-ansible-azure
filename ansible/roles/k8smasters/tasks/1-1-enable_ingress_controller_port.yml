@@ -4,11 +4,14 @@
     executable: python3
   register: ingress_controller_port
 
+- debug:
+    var: ingress_controller_port
+
 - name: check ingress controller port
   delegate_to: localhost
   wait_for:
     host: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
-    port: "{{ ingress_controller_port }}"
+    port: "{{ ingress_controller_port.stdout }}"
     timeout: 5
   register: ingress_controller_port_check
   ignore_errors: yes
@@ -16,7 +19,10 @@
 - name: deploy terraform
   delegate_to: localhost
   terraform:
-    project_path: "{{playbook_dir  }}/../terraform/" 
+    project_path: "{{playbook_dir  }}/../terraform/"
+    targets:
+      - azurerm_network_security_group.master
+    lock: no
     variables:
-      ingress_controller_port: "{{ ingress_controller_port }}"
+      ingress_controller_port: "{{ ingress_controller_port.stdout }}"
   when: ingress_controller_port_check is failed
