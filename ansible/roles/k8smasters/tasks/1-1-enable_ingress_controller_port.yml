@@ -17,10 +17,17 @@
 - name: deploy terraform
   delegate_to: localhost
   terraform:
-    project_path: "{{playbook_dir  }}/../terraform/"
+    project_path: "{{ playbook_dir }}/../terraform/"
     targets:
       - azurerm_network_security_group.master
     lock: no
     variables:
       ingress_controller_port: "{{ ingress_controller_port.stdout | int }}"
   when: ingress_controller_port_check is failed
+
+- name: save url
+  delegate_to: localhost
+  copy:
+    content: "http://{{ hostvars[inventory_hostname].ansible_host }}:{{ ingress_controller_port.stdout | int }}\n"
+    dest: "{{ app_url_path }}"
+    mode: 0755

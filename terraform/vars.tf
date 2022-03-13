@@ -31,6 +31,12 @@ variable "worker_vm_size" {
     default     = "Standard_DS11-1_v2" # 1 vCPU & 14 GB
 }
 
+variable "private_key_path" {
+    type        = string
+    description = "Ruta para la clave privada de acceso a las instancias"
+    default     = "~/.ssh/id_rsa"
+}
+
 variable "ingress_controller_port" {
     description = "ingress controller port"
     type        = number

@@ -16,12 +16,6 @@ variable "public_key_path" {
     default     = "~/.ssh/id_rsa.pub"
 }
 
-variable "private_key_path" {
-    type        = string
-    description = "Ruta para la clave privada de acceso a las instancias"
-    default     = "~/.ssh/id_rsa"
-}
-
 variable "ssh_user" {
     type        = string
     description = "Usuario para hacer ssh"

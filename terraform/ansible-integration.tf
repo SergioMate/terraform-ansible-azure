@@ -32,10 +32,3 @@ resource "null_resource" "ansible_run" {
         command     = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i host.azure --private-key ${var.private_key_path} deploy.yml"
     }
 }
-
-# https://learn.hashicorp.com/tutorials/terraform/outputs
-
-output "URL" {
-    description = "URL access to application"
-    value       = "http://${azurerm_linux_virtual_machine.master.public_ip_address}:${var.ingress_controller_port}"
-}

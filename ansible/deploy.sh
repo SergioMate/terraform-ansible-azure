@@ -1,0 +1,1 @@
+ansible-playbook -i host.azure deploy.yml
