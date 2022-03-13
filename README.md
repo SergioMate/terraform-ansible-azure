@@ -14,9 +14,9 @@ This repository enables Kubernetes cluster atomatized deployment into Azure with
 - An Azure account will be necessary in which following image terms have been accepted:
 
       publisher = "cognosys"
-      offer    	= "centos-8-stream-free"
-      sku	    = "centos-8-stream-free"
-      versión	= "1.2019.0810"
+      offer     = "centos-8-stream-free"
+      sku       = "centos-8-stream-free"
+      versión   = "1.2019.0810"
 
 ## Deployment
 1. Run [controller_install.sh](controller_install.sh) script to install all needed packages in controller machine
